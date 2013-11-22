@@ -625,7 +625,7 @@ class ThreadController extends FOSRestController
      */
     protected function onCreateThreadSuccess(FormInterface $form)
     {
-        return RouteRedirectView::create('fos_comment_get_thread', array('id' => $form->getData()->getId()));
+        return View::createRouteRedirect('fos_comment_get_thread', array('id' => $form->getData()->getId()));
     }
 
     /**
