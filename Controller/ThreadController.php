@@ -14,6 +14,7 @@ namespace FOS\CommentBundle\Controller;
 use FOS\CommentBundle\Model\CommentInterface;
 use FOS\CommentBundle\Model\ThreadInterface;
 use FOS\Rest\Util\Codes;
+use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Alexander <iam.asm89@gmail.com>
  */
-class ThreadController extends Controller
+class ThreadController extends FOSRestController
 {
     const VIEW_FLAT = 'flat';
     const VIEW_TREE = 'tree';
@@ -46,7 +47,7 @@ class ThreadController extends Controller
             ->setData(array('form' => $form->createView()))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'new'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -68,7 +69,7 @@ class ThreadController extends Controller
         $view = View::create()
             ->setData(array('thread' => $thread));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -87,7 +88,7 @@ class ThreadController extends Controller
         $view = View::create()
             ->setData(array('threads' => $threads));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -115,11 +116,11 @@ class ThreadController extends Controller
                 // Add the thread
                 $threadManager->saveThread($thread);
 
-                return $this->getViewHandler()->handle($this->onCreateThreadSuccess($form));
+                return $this->handleView($this->onCreateThreadSuccess($form));
             }
         }
 
-        return $this->getViewHandler()->handle($this->onCreateThreadError($form));
+        return $this->handleView($this->onCreateThreadError($form));
     }
 
     /**
@@ -148,7 +149,7 @@ class ThreadController extends Controller
             ->setData(array('form' => $form, 'id' => $id, 'isCommentable' => $thread->isCommentable()))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'commentable'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -177,11 +178,11 @@ class ThreadController extends Controller
             if ($form->isValid()) {
                 $manager->saveThread($thread);
 
-                return $this->getViewHandler()->handle($this->onOpenThreadSuccess($form));
+                return $this->handleView($this->onOpenThreadSuccess($form));
             }
         }
 
-        return $this->getViewHandler()->handle($this->onOpenThreadError($form));
+        return $this->handleView($this->onOpenThreadError($form));
     }
 
     /**
@@ -215,7 +216,7 @@ class ThreadController extends Controller
             ))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'comment_new'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -239,7 +240,7 @@ class ThreadController extends Controller
             ->setData(array('comment' => $comment, 'thread' => $thread))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'comment'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -269,7 +270,7 @@ class ThreadController extends Controller
             ->setData(array('form' => $form, 'id' => $id, 'commentId' => $commentId))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'comment_remove'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -298,11 +299,11 @@ class ThreadController extends Controller
 
         if ($form->isValid()) {
             if ($manager->saveComment($comment) !== false) {
-                return $this->getViewHandler()->handle($this->onRemoveThreadCommentSuccess($form, $id));
+                return $this->handleView($this->onRemoveThreadCommentSuccess($form, $id));
             }
         }
 
-        return $this->getViewHandler()->handle($this->onRemoveThreadCommentError($form, $id));
+        return $this->handleView($this->onRemoveThreadCommentError($form, $id));
     }
 
     /**
@@ -332,7 +333,7 @@ class ThreadController extends Controller
             ))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'comment_edit'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -361,11 +362,11 @@ class ThreadController extends Controller
 
         if ($form->isValid()) {
             if ($commentManager->saveComment($comment) !== false) {
-                return $this->getViewHandler()->handle($this->onEditCommentSuccess($form, $id, $comment->getParent()));
+                return $this->handleView($this->onEditCommentSuccess($form, $id, $comment->getParent()));
             }
         }
 
-        return $this->getViewHandler()->handle($this->onEditCommentError($form, $id, $comment->getParent()));
+        return $this->handleView($this->onEditCommentError($form, $id, $comment->getParent()));
     }
 
     /**
@@ -402,7 +403,7 @@ class ThreadController extends Controller
                     ->setData(array('errors' => $errors))
                     ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'errors'));
 
-                return $this->getViewHandler()->handle($view);
+                return $this->handleView($view);
             }
 
             // Add the thread
@@ -448,7 +449,7 @@ class ThreadController extends Controller
             $this->get('fos_rest.view_handler')->registerHandler('rss', $templatingHandler);
         }
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -477,11 +478,11 @@ class ThreadController extends Controller
 
         if ($form->isValid()) {
             if ($commentManager->saveComment($comment) !== false) {
-                return $this->getViewHandler()->handle($this->onCreateCommentSuccess($form, $id, $parent));
+                return $this->handleView($this->onCreateCommentSuccess($form, $id, $parent));
             }
         }
 
-        return $this->getViewHandler()->handle($this->onCreateCommentError($form, $id, $parent));
+        return $this->handleView($this->onCreateCommentError($form, $id, $parent));
     }
 
     /**
@@ -507,7 +508,7 @@ class ThreadController extends Controller
             ))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'comment_votes'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -541,7 +542,7 @@ class ThreadController extends Controller
             ))
             ->setTemplate(new TemplateReference('FOSCommentBundle', 'Thread', 'vote_new'));
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 
     /**
@@ -572,10 +573,10 @@ class ThreadController extends Controller
         if ($form->isValid()) {
             $voteManager->saveVote($vote);
 
-            return $this->getViewHandler()->handle($this->onCreateVoteSuccess($form, $id, $commentId));
+            return $this->handleView($this->onCreateVoteSuccess($form, $id, $commentId));
         }
 
-        return $this->getViewHandler()->handle($this->onCreateVoteError($form, $id, $commentId));
+        return $this->handleView($this->onCreateVoteError($form, $id, $commentId));
     }
 
     /**
@@ -820,13 +821,5 @@ class ThreadController extends Controller
 
             return $comment;
         }
-    }
-
-    /**
-     * @return \FOS\RestBundle\View\ViewHandler
-     */
-    private function getViewHandler()
-    {
-        return $this->container->get('fos_rest.view_handler');
     }
 }
